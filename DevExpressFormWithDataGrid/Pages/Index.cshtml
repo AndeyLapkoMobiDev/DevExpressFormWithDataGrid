@@ -1,0 +1,103 @@
+﻿@page
+@using DevExpressFormWithDataGrid.Models
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+@{ var test = new List<RecipeIngredient>(); }
+
+@(Html.DevExtreme().DataGrid<Recipe>()
+    .ShowBorders(true)
+    .DataSource(ds => ds
+        .Mvc()
+        .Controller("Recipes")
+        .LoadAction("Recipes")
+        .Key("Id")
+    )
+    .Columns(c =>
+    {
+        c.AddFor(m => m.Id);
+        c.AddFor(m => m.Name);
+        c.AddFor(m => m.RecipeIngredients).Visible(false);
+        c.AddFor(m => m.Description).Visible(false);
+    })
+    .MasterDetail(md => md
+        .Enabled(true)
+        .Template(@<text>
+                      <div class="dx-form-group-with-caption">
+                          <span class="dx-form-group-caption">Ingredients:</span>
+                          <div class="dx-form-group-content">
+                              @(Html.DevExtreme().DataGrid<RecipeIngredient>()
+                                  .ShowBorders(true)
+                                  .Columns(columns =>
+                                  {
+                                      columns.AddFor(m => m.IngredientId)
+                                          .Caption("Ingredient")
+                                          .Lookup(lookup => lookup
+                                              .DataSource(d => d
+                                                  .Mvc().Controller("Ingredients")
+                                                  .LoadAction("Ingredients")
+                                                  .Key("Id"))
+                                              .ValueExpr("Id")
+                                              .DisplayExpr("Name")
+                                          );
+                                  })
+                                  .DataSource(ds => ds
+                                      .Array().Data(new JS("data.RecipeIngredients"))
+                                  )
+                                  )
+                          </div>
+                      </div>
+                   </text>))
+    .Editing(e => e
+        .AllowUpdating(true)
+        .Mode(GridEditMode.Popup)
+        .Popup(p => p
+            .Title("Recipe")
+            .ShowTitle(true)
+            .Width(700)
+            .Position(pos => pos
+                .My(HorizontalAlignment.Center, VerticalAlignment.Center)
+                .At(HorizontalAlignment.Center, VerticalAlignment.Center)
+                .Of(new JS("window"))
+            )
+        )
+        .Form(f => f
+            .Items(items =>
+            {
+                items.AddSimpleFor(m => m.Id);
+                items.AddSimpleFor(m => m.Name);
+                items.AddSimpleFor(m => m.RecipeIngredients)
+                    .ColSpan(2)
+                    .Template(@<text>
+                                  @(Html.DevExtreme().DataGrid<RecipeIngredient>()
+                                      .ShowBorders(true)
+                                      .Columns(columns =>
+                                      {
+                                          columns.AddFor(m => m.IngredientId)
+                                              .Caption("Ingredient")
+                                              .Lookup(lookup => lookup
+                                                  .DataSource(d => d
+                                                      .Mvc().Controller("Ingredients")
+                                                      .LoadAction("Ingredients")
+                                                      .Key("Id"))
+                                                  .ValueExpr("Id")
+                                                  .DisplayExpr("Name")
+                                              );
+                                      })
+                                      .DataSource(new JS("data.RecipeIngredients"))
+                                      .Editing(e => e
+                                          .Mode(GridEditMode.Cell)
+                                          .AllowAdding(true)
+                                          .AllowDeleting(true)
+                                      )
+                                      )
+                               </text>);
+                items.AddSimpleFor(m => m.Description)
+                    .ColSpan(2)
+                    .Editor(editor => editor.TextArea().Height(200));
+            }
+            ))
+    )
+    )

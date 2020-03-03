@@ -1,0 +1,16 @@
+{
+  "name": "DevExpressFormWithDataGrid",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "devextreme": "^19.2.6",
+    "devextreme-aspnet-data": "^2.6.1"
+  }
+}
