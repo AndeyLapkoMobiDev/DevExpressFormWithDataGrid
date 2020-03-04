@@ -48,5 +48,11 @@ Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deseru
         {
             return DataSourceLoader.Load(_recipes, loadOptions);
         }
+        [HttpPut]
+        public IActionResult Put(int key, string values)
+        {
+            return Ok();
+        }
+        
     }
 }
